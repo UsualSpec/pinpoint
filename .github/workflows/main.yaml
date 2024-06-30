@@ -1,0 +1,27 @@
+name: CI Client builder
+on: [workflow_dispatch, push]
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pguyot/arm-runner-action@v2
+      with:
+        image_additional_mb: 8192
+        base_image: raspios_lite_arm64:latest
+        bind_mount_repository: true
+        copy_artifact_path: build/pinpoint
+        copy_artifact_dest: ${{ github.workspace }}
+        commands: |
+            # update system and install dependencies
+            apt update
+            apt install -y cmake build-essential
+            mkdir build
+            cd build/
+            cmake ..
+            make -j 2
+    - name: Upload binary release file
+      uses: actions/upload-artifact@v4
+      with:
+        name: pinpoint
+        path: ${{ github.workspace }}/pinpoint
