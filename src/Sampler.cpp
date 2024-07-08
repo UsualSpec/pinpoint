@@ -141,7 +141,7 @@ void Sampler::continuous_print_tick()
 	if (settings::countinous_timestamp_flag) {
 		// I wanted to use duration<float, ratio<1>>, but this resulted in weird constant epoch
 		auto ms_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch()).count();
-		settings::output_stream << ms_since_epoch * 0.001 << ",";
+		std::cout << ms_since_epoch * 0.001 << ",";
 	}
-	settings::output_stream << buf << std::endl;
+	std::cout << buf << std::endl;
 }
