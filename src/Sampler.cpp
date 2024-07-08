@@ -57,7 +57,7 @@ Sampler::Sampler(std::chrono::milliseconds interval, const std::vector<std::stri
 	}
 
 	if (settings::continuous_print_flag && settings::countinous_timestamp_flag) {
-		settings::output_stream << std::fixed << std::setprecision(4);
+		std::cout << std::fixed << std::setprecision(4);
 	}
 
 	m_detail->worker = std::thread([=]{ run(
