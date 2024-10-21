@@ -16,6 +16,7 @@ bool continuous_header_flag = false;
 bool countinous_timestamp_flag = false;
 bool energy_delayed_product = false;
 bool print_counter_list = false;
+bool print_counter_list_json = false;
 
 bool print_total_flag = false;
 
@@ -98,7 +99,7 @@ static struct option longopts[] = {
 void readProgArgs(int argc, char *argv[])
 {
 	int c;
-	while ((c = getopt_long (argc, argv, "hlcpne:r:d:i:b:a:o:U:", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "hlLcpne:r:d:i:b:a:o:U:", longopts, NULL)) != -1) {
 		switch (c) {
 			case 'h':
 			case '?':
@@ -132,6 +133,9 @@ void readProgArgs(int argc, char *argv[])
 			case 'b':
 				before = std::chrono::milliseconds(atoi(optarg));
 				break;
+			case 'L':
+			    print_counter_list_json = true;
+			    break;
 			case 'l':
 				print_counter_list = true;
 				break;
@@ -182,6 +186,40 @@ void validate()
 		for (const auto & alias: Registry::availableAliases()) {
 			std::cout << "\t" << alias.first << " -> " << alias.second << std::endl;
 		}
+		exit(0);
+	}
+
+	if (print_counter_list_json) {
+		// Print conters and aliasses in JSON format for processing via other applications
+
+		// Have a JSON object key available_conters which gets all available counters
+		std::cout << "{\"available_counters\":[";
+		bool first = true;
+		for (const auto & counter: Registry::availableCounters()) {
+			if (first) {
+				first=false;
+			} else {
+				// for fence post problem on commas
+				std::cout << ",";
+			}
+
+			std::cout << '"' << counter << '"';
+		}
+
+		// Also print aliasses
+		first = true;
+		std::cout << "],\"available_aliasses\":[";
+		for (const auto & alias: Registry::availableAliases()) {
+			if (first) {
+				first=false;
+			} else {
+				std::cout << ",";
+			}
+
+			std::cout << "{\"" << alias.first << "\":\"" << alias.second << "\"}";
+		}
+		
+		std::cout << "]}";
 		exit(0);
 	}
 

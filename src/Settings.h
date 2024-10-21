@@ -18,6 +18,7 @@ extern bool no_workload_flag;
 
 extern bool energy_delayed_product;
 extern bool print_counter_list;
+extern bool print_counter_list_json;
 
 extern bool print_total_flag;
 
